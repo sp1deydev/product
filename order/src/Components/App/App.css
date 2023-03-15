@@ -1,0 +1,25 @@
+
+.site-layout-content {
+  min-height: calc(100vh - 64px);
+  padding: 8px;
+  background: #ECECEC;
+}
+.layout .logo {
+  float: left;
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+  background: rgba(255, 255, 255, 0.3);
+
+}
+.ant-row-rtl #components-layout-demo-top .logo {
+  float: right;
+  margin: 16px 0 16px 24px;
+}
+.main-content-display {
+  position: relative;
+  background-color:#ffff;
+  height: calc(100vh - 80px);
+  border-radius: 10px;
+  box-shadow: 1px 1px 1px #AAA;
+}

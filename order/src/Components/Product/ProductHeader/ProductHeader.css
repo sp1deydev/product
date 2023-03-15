@@ -1,0 +1,22 @@
+.container-product-header {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    height: 35px;
+    
+}
+
+.searchBtn {
+    margin-right: 10px;
+    width: 32%
+}
+
+.group-btn {
+    position: absolute;
+    right: 0px;
+    display: inline-block;
+}
+.btn {
+    margin-left: 15px;
+}

@@ -1,0 +1,56 @@
+.container-product-list {
+    position: absolute;
+    top: 56px;
+    left: 8px;
+    right: 8px;
+    
+}
+
+.ant-card .ant-card-body {
+    position: relative;
+    padding: 4px;
+    min-height: 70px;
+}
+
+.infor {
+    margin-left: 60px;
+    display: inline-block;
+}
+
+.avt {
+    position: absolute;
+    top: 8px;
+    display: inline-block;
+}
+
+.product-title {
+    /* font-weight: bold; */
+    min-height: 20px;
+    max-height: 40px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 12px;
+}
+
+.product-title:hover {
+    overflow: visible;
+    /* display: inline-block; */
+}
+
+.price {
+    display: inline-block;
+    font-size: 14px;
+    color: #1677FF;
+}
+.pagination {
+    position: absolute;
+    top: 72vh;
+    /* left: 32vw; */
+    margin: 12px 0px 0px 8px;
+}
+
+
+
+
