@@ -2,8 +2,25 @@ import './App.css';
 import { Layout, Menu, Col, Row } from 'antd';
 import Product from '../Product/Product';
 import Cart from '../Cart/Cart';
+import { useState } from 'react';
+
 const { Header, Content, Footer } = Layout;
+
 function App() {
+  //STATE
+  const [addToCart, setAddToCart] = useState(1);
+  //giá trị thay đổi để useEffect của component CartList chạy
+  const [changeValue, setChangeValue] = useState(1);
+
+  //ACTION 
+  //add to cart action
+  const onAddToCart = (product) => {
+    setAddToCart(product);
+    if(changeValue === 5)
+      setChangeValue(0);
+    setChangeValue(changeValue + 1);
+  }
+
   return (
     <div className="App">
       <Layout className="layout">
@@ -27,12 +44,12 @@ function App() {
         <Row gutter={8}>
           <Col span={13} >
             <div className="main-content-display">
-              <Cart/>
+              <Cart addToCart={addToCart} changeValue={changeValue}/>
             </div>
           </Col>
           <Col span={11}>
             <div className="main-content-display">
-              <Product/>
+              <Product onAddToCart={onAddToCart}/>
             </div>
           </Col>
         </Row>

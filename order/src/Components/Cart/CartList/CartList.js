@@ -1,67 +1,54 @@
 import { Table } from "antd";
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import './CartList.css'
 import { DeleteOutlined, MoreOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 
 
 function CartList(props) {
-    var cart = [
-        {
-            "id": 1,
-            "name": "Iphone 11 64GB",
-            "image": "https://cdn.tgdd.vn/Products/Images/42/153856/iphone-xi-tim-200x200.jpg",
-            "price": 2000,
-            "quantity": 1,
-            "isOnCart": false
-          },
-          {
-            "id": 2,
-            "name": "Samsung S22 5G 128GB",
-            "image": "https://cdn.tgdd.vn/Products/Images/42/231110/Galaxy-S22-Black-600x600.jpg",
-            "price": 1500,
-            "quantity": 2,
-            "isOnCart": false
-          },
-          {
-            "id": 3,
-            "name": "Xiaomi Redmi Note 10S 8GB",
-            "image": "https://cdn.tgdd.vn/Products/Images/42/235969/xiaomi-redmi-note-10s-xanh-1-200x200.jpg",
-            "price": 800,
-            "quantity": 3,
-            "isOnCart": false
-          },
-          {
-            "id": 4,
-            "name": "Huawei P50 Pro 5G",
-            "image": "https://cdn.tgdd.vn/Products/Images/42/226196/huawei-p50-pro-600x600.jpg",
-            "price": 1320,
-            "quantity": 4,
-            "isOnCart": false
-          },
-    ]
+    //STATE
+    const [data, setData] = useState([]);
+    useEffect(()=> {
+        console.log(props.addToCart)
+        if(props.addToCart !== 1) {
+            let cart = [...data]
+            let index = cart.findIndex(item => item.id === props.addToCart.id);
+            if(index !== -1) {
+                let item = [...cart]
+                item[index].quantity++;
+                setData(item);
+            }
+            else {
+                cart.push(props.addToCart)
+                setData(cart);
+            }
+        }
+    }, [props.changeValue])
 
-    const [data, setData] = useState(cart);
+    //ACTION 
     //DELETE A PRODUCT IN CART
     const handleDelete = (id) => {
         //find index of item that you wanna delete
-        let index = data.findIndex(data => data.id == id)
+        let index = data.findIndex(data => data.id === id)
         let temp = [...data]
+        temp[index].quantity = 1;
         temp.splice(index, 1)
+        console.log("delete", temp);
         setData(temp)
     }
     //DECREASE QUANTITY OF PRODUCT
     const handleMinus = (id) => {
-        let index = data.findIndex(data => data.id == id)
+        let index = data.findIndex(data => data.id === id)
         let temp = [...data]
         if(temp[index].quantity > 1)
             temp[index].quantity--
+        console.log("minus", temp);
         setData(temp)
     }
 
     //INCREASE QUANTITY OF PRODUCT
     const handleAdd = (id) => {
-        let index = data.findIndex(data => data.id == id)
+        let index = data.findIndex(data => data.id === id)
         let temp = [...data]
         if(temp[index].quantity < 100)
             temp[index].quantity++
@@ -132,7 +119,7 @@ function CartList(props) {
             width: '6%'
         },
     ]
-
+    //DATA OF TABLE
     const dataSource = data.map((element, index) => {
         return {
             key: element.id,

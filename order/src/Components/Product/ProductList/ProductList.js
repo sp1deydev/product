@@ -21,6 +21,12 @@ function ProductList(props) {
         setCurrentPage(page);
     };
 
+    // add to cart action 
+    const addToCart = (product) => {
+        props.onAddToCart(product);
+    }
+
+
     //create var items to store products list ui
     const items = displayProducts.map((product, index) => {
         return (
@@ -28,6 +34,7 @@ function ProductList(props) {
                  <Card
                     hoverable
                     style={{ width: 'inherit' }}
+                    onClick = {() => addToCart(product)}
                 >
                     <Avatar src={product.image} className='avt' shape="square" size={54} />
                     <div className='infor'>
