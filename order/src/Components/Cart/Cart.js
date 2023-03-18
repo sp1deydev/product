@@ -4,9 +4,13 @@ import CartList from "./CartList/CartList"
 
 
 function Cart(props) {
+    const { addToCart, changeValue } = props;
     return (
         <React.Fragment>
-            <CartList/>
+            <CartList 
+                addToCart={addToCart}
+                changeValue={changeValue}
+            />
             <CartFooter/>
         </React.Fragment>
     )
