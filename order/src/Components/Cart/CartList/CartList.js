@@ -1,13 +1,16 @@
 import { Table } from "antd";
 import React, { useEffect, useState } from "react"
 import './CartList.css'
-import { DeleteOutlined, MoreOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { DeleteOutlined, MoreOutlined, PlusOutlined, MinusOutlined, InfoCircleOutlined, EditOutlined } from '@ant-design/icons';
+import { Button, Popover, Input } from 'antd';
 
+const { TextArea } = Input;
 
 function CartList(props) {
     //STATE
     const [data, setData] = useState([]);
+    const [expandedKeys, setExpandedKeys] = useState([]);
+
     useEffect(()=> {
         console.log(props.addToCart)
         if(props.addToCart !== 1) {
@@ -53,6 +56,24 @@ function CartList(props) {
         if(temp[index].quantity < 100)
             temp[index].quantity++
         setData(temp)
+    }
+
+    //Toggle expand note
+    const handleToggleExpand = (element) => {
+        let index = expandedKeys.findIndex(item => item === element.id)
+        console.log(index)
+        if(index == -1) {
+            let temp = [...expandedKeys]
+            temp.push(element.id)
+            console.log(temp)
+            setExpandedKeys(temp);
+        }
+        else {
+            let temp = [...expandedKeys]
+            temp.splice(index, 1)
+            setExpandedKeys(temp);
+
+        }
     }
 
 
@@ -108,12 +129,21 @@ function CartList(props) {
                 return <b><i>{total}</i></b>
             }
         },
+        // Table.EXPAND_COLUMN,
         {
             title: '',
             dataIndex: 'action',
-            render:  () => {
+            render:  (element) => {
+                const content = [
+                    <Button key='note' type="text" icon={<EditOutlined />} onClick={()=>{handleToggleExpand(element)}}>Ghi chú</Button>, 
+                    <br key='endline'></br>,
+                    <Button key='detail' type="text" icon={<InfoCircleOutlined />}>Xem chi tiết</Button>
+                ]
+
                 return (
-                    <Button type="text" icon={<MoreOutlined />} />
+                    <Popover placement="leftTop" content={<React.Fragment>{content}</React.Fragment>} trigger="click">
+                        <Button type="text" icon={<MoreOutlined />} />
+                    </Popover>
                 )
             },
             width: '6%'
@@ -128,7 +158,9 @@ function CartList(props) {
             name: element.name,
             quantity: element,
             subtotal: element.price,
-            total: element.price * element.quantity
+            total: element.price * element.quantity,
+            action: element
+            
         }
     })
     return (
@@ -138,6 +170,16 @@ function CartList(props) {
             pagination={false}
             scroll={{y: 10}}
             footer={() => 'Footer'}
+            expandable={{
+                rowExpandable: (record) => true,
+                expandedRowRender: (record) => {
+                    return (
+                        <TextArea showCount rows={1} placeholder="Ghi chú cho sản phẩm" maxLength={200} style = {{width:'96%', marginLeft:'2%'}} />
+                    )
+                }
+            }}
+            expandIconColumnIndex={-1}
+            expandedRowKeys={expandedKeys}
         />
     )
 }

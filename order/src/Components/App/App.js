@@ -5,7 +5,6 @@ import Cart from '../Cart/Cart';
 import { useState } from 'react';
 
 const { Header, Content, Footer } = Layout;
-
 function App() {
   //STATE
   const [addToCart, setAddToCart] = useState(1);
