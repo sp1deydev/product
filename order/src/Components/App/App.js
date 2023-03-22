@@ -15,10 +15,11 @@ function App() {
   //ACTION 
   //add to cart action
   const onAddToCart = (product) => {
-    setAddToCart(product);
-    if(changeValue === 5)
+    if(changeValue === 2)
       setChangeValue(0);
     setChangeValue(changeValue + 1);
+    
+    setAddToCart(product);
   };
 
   return (
