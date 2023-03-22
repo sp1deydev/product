@@ -9,51 +9,52 @@ function CartList(props) {
     //STATE
     const [data, setData] = useState([]);
     useEffect(()=> {
-        console.log(props.addToCart)
+        console.log(props.addToCart);
         if(props.addToCart !== 1) {
-            let cart = [...data]
+            let cart = [...data];
             let index = cart.findIndex(item => item.id === props.addToCart.id);
             if(index !== -1) {
-                let item = [...cart]
+                let item = [...cart];
                 item[index].quantity++;
                 setData(item);
             }
             else {
-                cart.push(props.addToCart)
+                cart.push(props.addToCart);
                 setData(cart);
             }
         }
-    }, [props.changeValue])
+    }, [props.changeValue]);
 
     //ACTION 
     //DELETE A PRODUCT IN CART
     const handleDelete = (id) => {
         //find index of item that you wanna delete
-        let index = data.findIndex(data => data.id === id)
-        let temp = [...data]
+        let index = data.findIndex(data => data.id === id);
+        let temp = [...data];
         temp[index].quantity = 1;
-        temp.splice(index, 1)
+        temp.splice(index, 1);
         console.log("delete", temp);
-        setData(temp)
-    }
+        setData(temp);
+    };
+
     //DECREASE QUANTITY OF PRODUCT
     const handleMinus = (id) => {
-        let index = data.findIndex(data => data.id === id)
-        let temp = [...data]
+        let index = data.findIndex(data => data.id === id);
+        let temp = [...data];
         if(temp[index].quantity > 1)
-            temp[index].quantity--
+            temp[index].quantity--;
         console.log("minus", temp);
-        setData(temp)
-    }
+        setData(temp);
+    };
 
     //INCREASE QUANTITY OF PRODUCT
     const handleAdd = (id) => {
-        let index = data.findIndex(data => data.id === id)
-        let temp = [...data]
+        let index = data.findIndex(data => data.id === id);
+        let temp = [...data];
         if(temp[index].quantity < 100)
-            temp[index].quantity++
-        setData(temp)
-    }
+            temp[index].quantity++;
+        setData(temp);
+    };
 
 
     const columns = [
@@ -61,7 +62,7 @@ function CartList(props) {
             title: '',
             dataIndex: 'index',
             render:  (index) => {
-                return <p>{index}</p>
+                return <p>{index}</p>;
             },
             width: '4%'
         },
@@ -69,7 +70,7 @@ function CartList(props) {
             title: '',
             dataIndex: 'delete',
             render:  id => {
-                return <Button type="text" icon={<DeleteOutlined />} onClick={() => handleDelete(id)} danger/>
+                return <Button type="text" icon={<DeleteOutlined />} onClick={() => handleDelete(id)} danger/>;
             },
             width: '6%'
         },
@@ -85,7 +86,7 @@ function CartList(props) {
                         &nbsp;
                         <Button type="text" icon={<PlusOutlined />} onClick={() => handleAdd(element.id)}/>
                     </React.Fragment>
-                )
+                );
             },
             width: '14%'
         },
@@ -98,14 +99,14 @@ function CartList(props) {
             title: '',
             dataIndex: 'subtotal',
             render: (sub) => {
-                return <i>{sub}</i>
+                return <i>{sub}</i>;
             }
         },
         {
             title: '',
             dataIndex: 'total',
             render: (total) => {
-                return <b><i>{total}</i></b>
+                return <b><i>{total}</i></b>;
             }
         },
         {
@@ -114,11 +115,12 @@ function CartList(props) {
             render:  () => {
                 return (
                     <Button type="text" icon={<MoreOutlined />} />
-                )
+                );
             },
             width: '6%'
         },
-    ]
+    ];
+
     //DATA OF TABLE
     const dataSource = data.map((element, index) => {
         return {
@@ -127,10 +129,11 @@ function CartList(props) {
             index: index + 1,
             name: element.name,
             quantity: element,
-            subtotal: element.price,
-            total: element.price * element.quantity
-        }
-    })
+            subtotal: parseInt(element.price),
+            total: parseInt(element.price) * element.quantity
+        };
+    });
+
     return (
         <Table 
             columns={columns} 
@@ -139,7 +142,7 @@ function CartList(props) {
             scroll={{y: 10}}
             footer={() => 'Footer'}
         />
-    )
+    );
 }
 
 export default CartList

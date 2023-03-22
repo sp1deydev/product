@@ -6,8 +6,9 @@ import { useEffect, useState } from 'react';
 
 function ProductList(props) {
     const productsPerPage = 18; //how many products per page
+    const category = ""; //Category
     const [currentPage, setCurrentPage] = useState(1);
-
+    console.log("category",category);
     //index of first and last product per page
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -17,21 +18,20 @@ function ProductList(props) {
     
     // event when you change page
     const onChangePage = (page) => {
-        console.log(page);
+        console.log(page);        
         setCurrentPage(page);
     };
 
     // add to cart action 
     const addToCart = (product) => {
         props.onAddToCart(product);
-    }
-
+    };
 
     //create var items to store products list ui
     const items = displayProducts.map((product, index) => {
         return (
             <Col span={8} key={index}>
-                 <Card
+                <Card
                     hoverable
                     style={{ width: 'inherit' }}
                     onClick = {() => addToCart(product)}
@@ -39,16 +39,16 @@ function ProductList(props) {
                     <Avatar src={product.image} className='avt' shape="square" size={54} />
                     <div className='infor'>
                         <div className='product-title'>{product.name}</div>
-                        <span className='price'>{product.price}$</span>
+                        <span className='price'>{parseInt(product.price)} VNĐ</span>
                     </div>
                 </Card>
             </Col>
-        )
-    })
+        );
+    });
+
     return (
         <div className="container-product-list">
             <Row gutter={[16, 16]}>
-
                 {/* DISPLAY PRODUCTS LIST */}
                 {items}
 
@@ -64,7 +64,7 @@ function ProductList(props) {
                 />
             </Row>
         </div>
-    )
+    );
 }
 
 export default ProductList;
