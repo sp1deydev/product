@@ -7,7 +7,7 @@ function ProductFooter(props) {
         <Button type="primary" className='pay-btn'>
             THANH TOÁN
         </Button>
-    )
+    );
 }
 
 export default ProductFooter

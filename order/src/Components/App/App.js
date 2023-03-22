@@ -1,5 +1,5 @@
 import './App.css';
-import { Layout, Menu, Col, Row } from 'antd';
+import { Layout, Menu, Col, Row, Input } from 'antd';
 import Product from '../Product/Product';
 import Cart from '../Cart/Cart';
 import { useState } from 'react';
@@ -19,25 +19,25 @@ function App() {
     if(changeValue === 5)
       setChangeValue(0);
     setChangeValue(changeValue + 1);
-  }
+  };
 
   return (
     <div className="App">
       <Layout className="layout">
       <Header>
-        <div className="logo" />
-        {/* <Menu
+        <Input className="logo" placeholder="Search" />
+        <Menu
           theme="dark"
           mode="horizontal"
           defaultSelectedKeys={['2']}
-          items={new Array(15).fill(null).map((_, index) => {
+          items={new Array(1).fill(null).map((_, index) => {
             const key = index + 1;
             return {
               key,
-              label: `nav ${key}`,
+              label: `Bill ${key}`,
             };
           })}
-        /> */}
+        />
       </Header>
       <Content style={{background: 'grey'}}>
         <div className="site-layout-content">

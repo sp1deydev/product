@@ -13,7 +13,7 @@ function Cart(props) {
             />
             <CartFooter/>
         </React.Fragment>
-    )
+    );
 }
 
 export default Cart

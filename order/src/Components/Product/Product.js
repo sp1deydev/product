@@ -6,14 +6,15 @@ import React from "react"
 function Product(props) {
     const onAddToCart = (product) => {
         props.onAddToCart(product);
-    }
+    };
+    
     return (
         <React.Fragment>
             <ProductHeader/>
             <ProductList onAddToCart={onAddToCart}/>
             <ProductFooter/>
         </React.Fragment>
-    )
+    );
 }
 
 export default Product
