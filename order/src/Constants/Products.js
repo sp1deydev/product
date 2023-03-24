@@ -17,7 +17,6 @@ async function getProducts() {
 const dataList = await getProducts();
 const Products = [];
 
-console.log(dataList);
 dataList.map(elem => {
   var product = new Product();
   product.id = elem.record_id;

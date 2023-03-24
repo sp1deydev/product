@@ -9,6 +9,17 @@
 .ant-table-tbody{
     padding: 16px 4px !important;
   }
-  .ant-table-tbody > tr > td.ant-table-cell {
+.ant-table-tbody > tr > td.ant-table-cell {
     padding: 16px 4px !important;
-  }
+}
+
+.note {
+  width: 96%;
+  margin-left: 2%;
+  opacity: 0.5;
+  border: 0px;
+}
+
+.note:focus {
+  border: 2px solid #000;
+}
