@@ -19,6 +19,7 @@ function App() {
       setChangeValue(0);
     setChangeValue(changeValue + 1);
     setAddToCart(product);
+    setTotal(parseInt(total)  + parseInt(product.price));
   };
 
   return (
