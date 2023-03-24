@@ -1,3 +1,4 @@
+import systemConfig from "./config.json";
 class Product {
     constructor(id, name, image, price, quantity) {
         this.id = id;
@@ -10,10 +11,11 @@ class Product {
 }
 
 async function getProducts() {
-    var response = await fetch("http://192.168.1.4:8888/75/modules/RestfulApi/index.php?module=Auth&key=NEIXqqnsAdswvmYf");
+    console.log("start get products");
+    var response = await fetch(systemConfig.SERVER_API_URL + "modules/RestfulApi/index.php?module=Auth&key=" + systemConfig.SERVER_API_KEY);
     var data = await response.json();
-  
-    response = await fetch(`http://192.168.1.4:8888/75/modules/RestfulApi/Products/start/0/length/2/order/vtiger_products.productid%20DESC/${data.result}`);
+    
+    response = await fetch(systemConfig.SERVER_API_URL + "modules/RestfulApi/Products/start/0/length/2000/order/vtiger_products.productid%20DESC/" + data.result);
     data = await response.json();
     console.log(data.result)
     return data.result;

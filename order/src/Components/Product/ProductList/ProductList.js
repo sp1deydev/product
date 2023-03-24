@@ -6,9 +6,7 @@ import { useEffect, useState } from 'react';
 
 function ProductList(props) {
     const productsPerPage = 18; //how many products per page
-    const category = ""; //Category
     const [currentPage, setCurrentPage] = useState(1);
-    console.log("category",category);
     //index of first and last product per page
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -17,8 +15,7 @@ function ProductList(props) {
     const displayProducts = Products.slice(indexOfFirstProduct, indexOfLastProduct);
     
     // event when you change page
-    const onChangePage = (page) => {
-        console.log(page);        
+    const onChangePage = (page) => {     
         setCurrentPage(page);
     };
 

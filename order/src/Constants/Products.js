@@ -6,10 +6,10 @@ class Product {
 }
 
 async function getProducts() {
-  var response = await fetch("http://192.168.1.4:8888/75/modules/RestfulApi/index.php?module=Auth&key=NEIXqqnsAdswvmYf");
+  var response = await fetch(`${process.env.REACT_APP_API_URL}modules/RestfulApi/index.php?module=Auth&key=${process.env.REACT_APP_API_KEY}`);
   var data = await response.json();
 
-  response = await fetch(`http://192.168.1.4:8888/75/modules/RestfulApi/Products/start/0/length/20/order/vtiger_products.productid%20DESC/${data.result}`);
+  response = await fetch(`${process.env.REACT_APP_API_URL}modules/RestfulApi/Products/start/0/length/20/order/vtiger_products.productid/DESC/${data.result}`);
   data = await response.json();
   return data.result;
 }
@@ -17,7 +17,7 @@ async function getProducts() {
 const dataList = await getProducts();
 const Products = [];
 
-
+console.log(dataList);
 dataList.map(elem => {
   var product = new Product();
   product.id = elem.record_id;

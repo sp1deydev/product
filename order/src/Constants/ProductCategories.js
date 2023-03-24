@@ -1,5 +1,4 @@
 import { FolderAddOutlined } from '@ant-design/icons';
-
 class Category {
     constructor() {
         this.icon = <FolderAddOutlined />;
@@ -7,10 +6,9 @@ class Category {
 }
   
 async function getCategories() {
-    var response = await fetch("http://192.168.1.4:8888/75/modules/RestfulApi/index.php?module=Auth&key=NEIXqqnsAdswvmYf");
+    var response = await fetch(`${process.env.REACT_APP_API_URL}modules/RestfulApi/index.php?module=Auth&key=${process.env.REACT_APP_API_KEY}`);
     var data = await response.json();
-  
-    response = await fetch(`http://192.168.1.4:8888/75/modules/RestfulApi/Products/picklist/productcategory/${data.result}`);
+    response = await fetch(`${process.env.REACT_APP_API_URL}modules/RestfulApi/Products/picklist/productcategory/${data.result}`);   
     data = await response.json();
     return data.result.values;
 }
@@ -18,7 +16,6 @@ async function getCategories() {
 const dataList = await getCategories();
 const Categories = [];
 var category = new Category();
-  
 Object.keys(dataList).map(elem => {
     category.label = elem;
     category.key = elem;
@@ -26,5 +23,4 @@ Object.keys(dataList).map(elem => {
     Categories.push(category);
     category = new Category();
 });
-  
 export default Categories
