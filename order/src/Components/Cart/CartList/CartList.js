@@ -9,7 +9,10 @@ const { TextArea } = Input;
 function CartList(props) {
     //STATE
     const [data, setData] = useState([]);
+    //open note
     const [expandedKeys, setExpandedKeys] = useState([]);
+    //open more button 
+    const [openPopover, setOpenPopover] = useState([]);
 
     useEffect(()=> {
 
@@ -25,6 +28,9 @@ function CartList(props) {
             else {
                 props.addToCart.note = ''
                 cart.push(props.addToCart)
+                let popover = [...openPopover]
+                popover.push(false)
+                setOpenPopover(popover)
                 setData(cart);
             }
         }
@@ -63,9 +69,23 @@ function CartList(props) {
     //Toggle expand note
     const handleToggleExpand = (element) => {
         let index = expandedKeys.findIndex(item => item === element.id)
+
+        //close popover when click note button
+        let popoverIndex = data.findIndex(item => item.id === element.id)
+        let popover = [...openPopover]
+        popover[popoverIndex] = false
+        setOpenPopover(popover)
+        
         if(index === -1) {
             let temp = [...expandedKeys]
-
+            temp = []
+            //keep display note that is not null
+            expandedKeys.forEach(key => {
+                let subIndex = data.findIndex(item => item.id === key)
+                if(subIndex !== -1) 
+                    if(data[subIndex].note !== '') 
+                        temp.push(data[subIndex].id)
+            })
             temp.push(element.id)
             setExpandedKeys(temp);
         }
@@ -75,11 +95,25 @@ function CartList(props) {
             setExpandedKeys(temp);
 
         }
+        
     }
 
     //get data in note text area
     const onNote = (event, record) => {
-        console.log(record);
+        let newData = [...data];
+        let index = newData.findIndex(item => item.id === record.key)
+        newData[index].note = event.target.value
+        setData(newData);
+    }
+
+    //open popover
+    const handlePopover = (index) => {
+        let popover = [...openPopover]
+        popover.forEach((elm, index) => {
+            popover[index] = false
+        })
+        popover[index] = true
+        setOpenPopover(popover)
     }
 
 
@@ -146,8 +180,8 @@ function CartList(props) {
                 ]
 
                 return (
-                    <Popover placement="leftTop" content={<React.Fragment>{content}</React.Fragment>} trigger="click">
-                        <Button type="text" icon={<MoreOutlined />} />
+                    <Popover placement="leftTop" open={openPopover[index]} content={<React.Fragment>{content}</React.Fragment>} trigger="click">
+                        <Button type="text" icon={<MoreOutlined />} onClick={()=>{handlePopover(index)}}/>
                     </Popover>
                 )
             },
@@ -179,7 +213,7 @@ function CartList(props) {
                 rowExpandable: (record) => true,
                 expandedRowRender: (record) => {
                     return (
-                        <TextArea showCount rows={1} placeholder="Ghi chú cho sản phẩm" maxLength={200} onChange={(event)=>{onNote(event, record)}} style={{width:'96%', marginLeft:'2%'}} />
+                        <TextArea rows={1} placeholder="Ghi chú cho sản phẩm" maxLength={200} onChange={(event)=>{onNote(event, record)}} style={{}} className='note'/>
                     )
                 }
             }}

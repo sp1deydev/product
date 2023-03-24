@@ -18,7 +18,6 @@ function App() {
     if(changeValue === 2)
       setChangeValue(0);
     setChangeValue(changeValue + 1);
-    
     setAddToCart(product);
   };
 
