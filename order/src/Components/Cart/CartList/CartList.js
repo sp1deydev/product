@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Popover, Input, Modal } from "antd";
 import Helper from "./../../../Common/Helper";
+import CartFooter from "../CartFooter/CartFooter";
 class CustomPrice {
   constructor() {
     this.rowId = 1;
@@ -185,7 +186,7 @@ function CartList(props) {
     {
       title: "",
       dataIndex: "name",
-      width: "46%",
+      width: "38%",
     },
     {
       title: "",
@@ -265,9 +266,35 @@ function CartList(props) {
       action: { element, index },
     };
   });
-  const modal = () => {
-    return (
-      <Modal
+  return (
+    <React.Fragment>
+    <Table
+      columns={columns}
+      dataSource={dataSource}
+      pagination={false}
+      scroll={{ y: 10 }}
+      footer={() => <CartFooter cartData={data}/>}
+      expandable={{
+        rowExpandable: (record) => true,
+        expandedRowRender: (record) => {
+          return (
+            <TextArea
+              rows={1}
+              placeholder="Ghi chú cho sản phẩm"
+              maxLength={200}
+              onChange={(event) => {
+                onNote(event, record);
+              }}
+              style={{}}
+              className="note"
+            />
+          );
+        },
+      }}
+      expandIconColumnIndex={-1}
+      expandedRowKeys={expandedKeys}
+    />
+    <Modal
         title="Điều chỉnh giá bán"
         open={isModalOpen}
         onOk={handleOk}
@@ -296,35 +323,7 @@ function CartList(props) {
           style={{ width: 200 }}
         />
       </Modal>
-    );
-  };
-  return (
-    <Table
-      columns={columns}
-      dataSource={dataSource}
-      pagination={false}
-      scroll={{ y: 10 }}
-      footer={modal}
-      expandable={{
-        rowExpandable: (record) => true,
-        expandedRowRender: (record) => {
-          return (
-            <TextArea
-              rows={1}
-              placeholder="Ghi chú cho sản phẩm"
-              maxLength={200}
-              onChange={(event) => {
-                onNote(event, record);
-              }}
-              style={{}}
-              className="note"
-            />
-          );
-        },
-      }}
-      expandIconColumnIndex={-1}
-      expandedRowKeys={expandedKeys}
-    />
+    </React.Fragment>
   );
 }
 
