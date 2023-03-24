@@ -3,22 +3,22 @@ import { Layout, Menu, Col, Row, Input } from 'antd';
 import Product from '../Product/Product';
 import Cart from '../Cart/Cart';
 import { useState } from 'react';
-
 const { Header, Content, Footer } = Layout;
 
 function App() {
   //STATE
   const [addToCart, setAddToCart] = useState(1);
   //giá trị thay đổi để useEffect của component CartList chạy
-  const [changeValue, setChangeValue] = useState(1);
+  const [changeValue, setChangeValue] = useState(0);
+  const [total, setTotal] = useState(0);
 
   //ACTION 
   //add to cart action
   const onAddToCart = (product) => {
     setAddToCart(product);
-    if(changeValue === 5)
-      setChangeValue(0);
+    if(changeValue === 5) setChangeValue(0);
     setChangeValue(changeValue + 1);
+    setTotal(parseInt(total)  + parseInt(product.price));
   };
 
   return (
@@ -44,7 +44,7 @@ function App() {
         <Row gutter={8}>
           <Col span={13} >
             <div className="main-content-display">
-              <Cart addToCart={addToCart} changeValue={changeValue}/>
+              <Cart addToCart={addToCart} changeValue={changeValue} total = {total}/>
             </div>
           </Col>
           <Col span={11}>
