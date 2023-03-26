@@ -34,6 +34,7 @@ function CartList(props) {
   const [price, setPrice] = useState({});
   const [newStatePrice, setNewStatePrice] = useState();
   const [discountPrice, setDiscountPrice] = useState({amount: "", percent: ""});
+  const [displayPrice, setDisplayPrice] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     if (props.addToCart !== 1) {
@@ -93,25 +94,28 @@ function CartList(props) {
     setPrice(price);
     setIsModalOpen(true);
     setNewStatePrice(element.price)
+    if(displayPrice === null)
+      setDisplayPrice(element.price);
   };
-  const handleOk = () => {
-    if(price.err === false) {
-        let index = data.findIndex(element => element.id === price.rowId)
-        let newData = [...data]
-        newData[index].copyPrice = newStatePrice;
-        setData(newData)
-        setDiscountPrice({amount: "", percent: ""})
-        setIsModalOpen(false);
-    }
-  };
+
   const handleCancel = () => {
-    setDiscountPrice({amount: "", percent: ""})
-    setIsModalOpen(false);
+    if(price.err === false) {
+      let index = data.findIndex(element => element.id === price.rowId)
+      let newData = [...data]
+      newData[index].copyPrice = newStatePrice;
+      setData(newData)
+      setDisplayPrice(newData[index].price)
+      setIsModalOpen(false);
+    }
+    else
+      setIsModalOpen(true);
    };
    //change amout
    const onChangeAmount = (value) => {
         setDiscountPrice({amount: value, percent: ""})
-        let updatePrice = price.statePrice - value
+        let updatePrice = value
+        if(value === null)
+          updatePrice = 0
         if(updatePrice < price.basePrice) {
             let newPrice = {...price}
             newPrice.err = true;
@@ -125,31 +129,33 @@ function CartList(props) {
             let newPrice = {...price}
             newPrice.err = false;
             setPrice(newPrice)
+            setDisplayPrice(updatePrice)
             setNewStatePrice(updatePrice)
+          }
         }
-    }
-    
+        
     const onChangePercent = (value) => {
         setDiscountPrice({amount: "", percent: value})
         let updatePrice = price.statePrice - ((price.statePrice * value) / 100)
         if(updatePrice < price.basePrice) {
-            let newPrice = {...price}
-            newPrice.err = true;
-            setPrice(newPrice)
+          let newPrice = {...price}
+          newPrice.err = true;
+          setPrice(newPrice)
             if(updatePrice < 0)
-                setNewStatePrice(0)
+            setNewStatePrice(0)
             else
-                setNewStatePrice(updatePrice)
-        }
-        else {
+            setNewStatePrice(updatePrice)
+          }
+          else {
             let newPrice = {...price}
             newPrice.err = false;
             setPrice(newPrice)
+            setDisplayPrice(updatePrice)
             setNewStatePrice(updatePrice)
+          }
         }
-    }
-
-
+        
+        
 
 
     //Toggle expand note
@@ -359,18 +365,18 @@ function CartList(props) {
     <Modal
         title="Điều chỉnh giá bán"
         open={isModalOpen}
-        onOk={handleOk}
         onCancel={handleCancel}
         width={300}
+        footer={[]}
       >
         <Input
           placeholder="Đơn giá"
-          value = {Helper.convertToVnd(parseInt(price.statePrice))}
+          value = {Helper.convertToVnd(parseInt(displayPrice))}
           style={{ width: '100%', marginBottom: 12, fontWeight: 'bold' }}
           disabled
         />
         <InputNumber
-            placeholder="Giảm giá trực tiếp"
+            placeholder="Giá mới "
             value={discountPrice.amount}
             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             style={{ width: '100%', marginBottom: 12 }}
@@ -382,13 +388,7 @@ function CartList(props) {
             style={{ width: '100%', marginBottom: 12 }}
             onChange={onChangePercent}
         />
-        <Input
-          placeholder="Giá mới"
-          value = {Helper.convertToVnd(parseInt(newStatePrice))}
-          style={{ width: '100%', marginBottom: 12, fontWeight: 'bold' }}
-          disabled
-        />
-
+        
         {price.err ? <Tag icon={<CloseCircleOutlined />} hidden={price.err} color="error" style={{ width: '100%'}}>
                 Giá bán đang nhỏ hơn giá vốn
             </Tag> 
