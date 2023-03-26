@@ -105,6 +105,7 @@ function CartList(props) {
     }
   };
   const handleCancel = () => {
+    setDiscountPrice({amount: "", percent: ""})
     setIsModalOpen(false);
    };
    //change amout
