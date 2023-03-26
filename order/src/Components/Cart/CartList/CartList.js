@@ -34,7 +34,6 @@ function CartList(props) {
   const [price, setPrice] = useState({});
   const [newStatePrice, setNewStatePrice] = useState();
   const [discountPrice, setDiscountPrice] = useState({amount: "", percent: ""});
-  const [displayPrice, setDisplayPrice] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     if (props.addToCart !== 1) {
@@ -42,12 +41,12 @@ function CartList(props) {
       let index = cart.findIndex((item) => item.id === props.addToCart.id);
       if (index !== -1) {
         let item = [...data];
-        console.log("item", item);
         item[index].quantity++;
         setData(item);
       } else {
         props.addToCart.note = "";
-        props.addToCart.copyPrice = props.addToCart.price;
+        props.addToCart.amount = "";
+        props.addToCart.percent = "";
         cart.push(props.addToCart);
         let popover = [...openPopover];
         popover.push(false);
@@ -85,34 +84,36 @@ function CartList(props) {
     setData(temp);
   };
   const showModal = (element) => {
+    let index = data.findIndex((data) => data.id === element.id)
     let price = {
+        index: index,
         rowId: element.id, 
         basePrice: element.purchase_cost,
         statePrice: element.price,
         err: false,
     };
+    setDiscountPrice({amount: data[index].amount, percent: data[index].percent})
     setPrice(price);
     setIsModalOpen(true);
     setNewStatePrice(element.price)
-    if(displayPrice === null)
-      setDisplayPrice(element.price);
   };
 
   const handleCancel = () => {
     if(price.err === false) {
       let index = data.findIndex(element => element.id === price.rowId)
       let newData = [...data]
-      newData[index].copyPrice = newStatePrice;
+      newData[index].price = newStatePrice;
+      newData[index].amount = discountPrice.amount;
+      newData[index].percent = discountPrice.percent;
       setData(newData)
-      setDisplayPrice(newData[index].price)
       setIsModalOpen(false);
     }
     else
       setIsModalOpen(true);
    };
    //change amout
-   const onChangeAmount = (value) => {
-        setDiscountPrice({amount: value, percent: ""})
+   const onChangeAmount = (value) => {      
+        setDiscountPrice({amount: value, percent: ""});
         let updatePrice = value
         if(value === null)
           updatePrice = 0
@@ -129,13 +130,12 @@ function CartList(props) {
             let newPrice = {...price}
             newPrice.err = false;
             setPrice(newPrice)
-            setDisplayPrice(updatePrice)
             setNewStatePrice(updatePrice)
           }
         }
         
     const onChangePercent = (value) => {
-        setDiscountPrice({amount: "", percent: value})
+        setDiscountPrice({amount: "", percent: value});
         let updatePrice = price.statePrice - ((price.statePrice * value) / 100)
         if(updatePrice < price.basePrice) {
           let newPrice = {...price}
@@ -150,7 +150,6 @@ function CartList(props) {
             let newPrice = {...price}
             newPrice.err = false;
             setPrice(newPrice)
-            setDisplayPrice(updatePrice)
             setNewStatePrice(updatePrice)
           }
         }
@@ -263,7 +262,7 @@ function CartList(props) {
         return (
           <React.Fragment>
             <Button type="text" onClick={() => showModal(element)}>
-              {Helper.convertToVnd(parseInt(element.copyPrice))}
+              {Helper.convertToVnd(parseInt(element.price))}
             </Button>
           </React.Fragment>
         );
@@ -330,7 +329,7 @@ function CartList(props) {
       name: element.name,
       quantity: element,
       subtotal: element,
-      total: parseInt(element.copyPrice) * element.quantity,
+      total: parseInt(element.price) * element.quantity,
       action: { element, index },
     };
   });
@@ -371,7 +370,7 @@ function CartList(props) {
       >
         <Input
           placeholder="Đơn giá"
-          value = {Helper.convertToVnd(parseInt(displayPrice))}
+          value = {Helper.convertToVnd(parseInt(newStatePrice))}
           style={{ width: '100%', marginBottom: 12, fontWeight: 'bold' }}
           disabled
         />

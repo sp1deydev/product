@@ -9,7 +9,7 @@ function CartFooter(props) {
   let totalPrice = 0;
   cartData.forEach(element => {
     totalQuantity += element.quantity
-    totalPrice += element.quantity * element.copyPrice
+    totalPrice += element.quantity * element.price
   });
   return (
     <div>
