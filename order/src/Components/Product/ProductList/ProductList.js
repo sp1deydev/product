@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 function ProductList(props) {
     const [categoryProducts, setCategoriesProducts] = useState([]);
-
+    console.log(Products)
     useEffect(() => {
         //category product list
         if(props.category === "") {

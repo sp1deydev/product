@@ -8,14 +8,16 @@ import {
   MinusOutlined,
   InfoCircleOutlined,
   EditOutlined,
+  CloseCircleOutlined,
 } from "@ant-design/icons";
-import { Button, Popover, Input, Modal } from "antd";
+import { Button, Popover, Input, Modal, Tag, InputNumber } from "antd";
 import Helper from "./../../../Common/Helper";
 import CartFooter from "../CartFooter/CartFooter";
 class CustomPrice {
   constructor() {
     this.rowId = 1;
     this.basePrice = 0;
+    this.statePrice = 0;
     this.discountAmount = 0;
     this.discountPercent = 0;
   }
@@ -29,7 +31,9 @@ function CartList(props) {
   const [expandedKeys, setExpandedKeys] = useState([]);
   //open more button
   const [openPopover, setOpenPopover] = useState([]);
-  const [price, setPrice] = useState([]);
+  const [price, setPrice] = useState({});
+  const [newStatePrice, setNewStatePrice] = useState();
+  const [discountPrice, setDiscountPrice] = useState({amount: "", percent: ""});
   const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     if (props.addToCart !== 1) {
@@ -42,6 +46,7 @@ function CartList(props) {
         setData(item);
       } else {
         props.addToCart.note = "";
+        props.addToCart.copyPrice = props.addToCart.price;
         cart.push(props.addToCart);
         let popover = [...openPopover];
         popover.push(false);
@@ -79,15 +84,74 @@ function CartList(props) {
     setData(temp);
   };
   const showModal = (element) => {
-    let price = new CustomPrice(element.id, element.price, 0, 0);
-    console.log("price:", price);
+    let price = {
+        rowId: element.id, 
+        basePrice: element.purchase_cost,
+        statePrice: element.price,
+        err: false,
+    };
     setPrice(price);
     setIsModalOpen(true);
+    setNewStatePrice(element.price)
   };
   const handleOk = () => {
-    setIsModalOpen(false);
+    if(price.err === false) {
+        let index = data.findIndex(element => element.id === price.rowId)
+        let newData = [...data]
+        newData[index].copyPrice = newStatePrice;
+        setData(newData)
+        setDiscountPrice({amount: "", percent: ""})
+        setIsModalOpen(false);
+    }
   };
-  //Toggle expand note
+  const handleCancel = () => {
+    setIsModalOpen(false);
+   };
+   //change amout
+   const onChangeAmount = (value) => {
+        setDiscountPrice({amount: value, percent: ""})
+        let updatePrice = price.statePrice - value
+        if(updatePrice < price.basePrice) {
+            let newPrice = {...price}
+            newPrice.err = true;
+            setPrice(newPrice)
+            if(updatePrice < 0)
+                setNewStatePrice(0)
+            else
+                setNewStatePrice(updatePrice)
+        }
+        else {
+            let newPrice = {...price}
+            newPrice.err = false;
+            setPrice(newPrice)
+            setNewStatePrice(updatePrice)
+        }
+    }
+    
+    const onChangePercent = (value) => {
+        setDiscountPrice({amount: "", percent: value})
+        let updatePrice = price.statePrice - ((price.statePrice * value) / 100)
+        if(updatePrice < price.basePrice) {
+            let newPrice = {...price}
+            newPrice.err = true;
+            setPrice(newPrice)
+            if(updatePrice < 0)
+                setNewStatePrice(0)
+            else
+                setNewStatePrice(updatePrice)
+        }
+        else {
+            let newPrice = {...price}
+            newPrice.err = false;
+            setPrice(newPrice)
+            setNewStatePrice(updatePrice)
+        }
+    }
+
+
+
+
+    //Toggle expand note
   const handleToggleExpand = (element) => {
     let index = expandedKeys.findIndex((item) => item === element.id);
 
@@ -131,9 +195,6 @@ function CartList(props) {
     });
     popover[index] = true;
     setOpenPopover(popover);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
   };
   const columns = [
     {
@@ -195,7 +256,7 @@ function CartList(props) {
         return (
           <React.Fragment>
             <Button type="text" onClick={() => showModal(element)}>
-              {Helper.convertToVnd(parseInt(element.price))}
+              {Helper.convertToVnd(parseInt(element.copyPrice))}
             </Button>
           </React.Fragment>
         );
@@ -262,7 +323,7 @@ function CartList(props) {
       name: element.name,
       quantity: element,
       subtotal: element,
-      total: parseInt(element.price) * element.quantity,
+      total: parseInt(element.copyPrice) * element.quantity,
       action: { element, index },
     };
   });
@@ -302,26 +363,37 @@ function CartList(props) {
         width={300}
       >
         <Input
-          id="originalPrice"
-          placeholder="Đơn giá gốc"
-          suffix="đ"
-          style={{ width: 200, marginBottom: 6 }}
+          placeholder="Đơn giá"
+          value = {Helper.convertToVnd(parseInt(price.statePrice))}
+          style={{ width: '100%', marginBottom: 12, fontWeight: 'bold' }}
           disabled
         />
-        <br />
-        <Input
-          id="discountPrice"
-          placeholder="Giảm giá trực tiếp"
-          suffix="đ"
-          style={{ width: 200, marginBottom: 6 }}
+        <InputNumber
+            placeholder="Giảm giá trực tiếp"
+            value={discountPrice.amount}
+            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            style={{ width: '100%', marginBottom: 12 }}
+            onChange={onChangeAmount}
         />
-        <br />
-        <Input
-          id="discoundPercent"
-          placeholder="Giảm giá theo %"
-          suffix="%"
-          style={{ width: 200 }}
+        <InputNumber
+            placeholder="Giảm giá theo %"
+            value={discountPrice.percent}
+            style={{ width: '100%', marginBottom: 12 }}
+            onChange={onChangePercent}
         />
+        <Input
+          placeholder="Giá mới"
+          value = {Helper.convertToVnd(parseInt(newStatePrice))}
+          style={{ width: '100%', marginBottom: 12, fontWeight: 'bold' }}
+          disabled
+        />
+
+        {price.err ? <Tag icon={<CloseCircleOutlined />} hidden={price.err} color="error" style={{ width: '100%'}}>
+                Giá bán đang nhỏ hơn giá vốn
+            </Tag> 
+            :
+            ""
+        }
       </Modal>
     </React.Fragment>
   );

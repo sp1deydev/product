@@ -23,6 +23,7 @@ dataList.map(elem => {
   product.name = elem.productname;
   product.image = elem.imagename;
   product.price = elem.unit_price;
+  product.purchase_cost = elem.purchase_cost;
   product.category = elem.productcategory
 
   Products.push(product);
