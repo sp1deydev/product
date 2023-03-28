@@ -10,7 +10,6 @@ function App() {
   const [addToCart, setAddToCart] = useState(1);
   //giá trị thay đổi để useEffect của component CartList chạy
   const [changeValue, setChangeValue] = useState(0);
-  const [total, setTotal] = useState(0);
 
   //ACTION 
   //add to cart action
@@ -19,7 +18,6 @@ function App() {
       setChangeValue(0);
     setChangeValue(changeValue + 1);
     setAddToCart(product);
-    setTotal(parseInt(total)  + parseInt(product.price));
   };
 
   return (
@@ -45,7 +43,7 @@ function App() {
         <Row gutter={8}>
           <Col span={13} >
             <div className="main-content-display">
-              <Cart addToCart={addToCart} changeValue={changeValue} total = {total}/>
+              <Cart addToCart={addToCart} changeValue={changeValue}/>
             </div>
           </Col>
           <Col span={11}>
