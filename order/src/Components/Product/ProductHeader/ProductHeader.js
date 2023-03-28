@@ -17,8 +17,6 @@ function ProductHeader(props) {
   const items = [...ProductCategories];
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [listCustomers, setListCustomers] = useState([])
-  var newCustomer = {}
-
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -68,33 +66,29 @@ function ProductHeader(props) {
 
 const onFinish = (values) => {
     console.log('Success:', values);
-    newCustomer.firstname = values.firstname;
-    newCustomer.lastname = values.lastname;
-    newCustomer.phone = values.phone;
-    newCustomer.email = values.email;
-    newCustomer.mailingstreet = values.mailingstreet;
-    newCustomer.birthday = values.birthday;
-    let postCustomer = `firstname=${newCustomer.firstname}&lastname="${newCustomer.lastname}&phone=${newCustomer.phone}&email=${newCustomer.email}&mailingstreet=${newCustomer.mailingstreet}&birthday=${newCustomer.birthday}`
-    console.log("newCustomer", newCustomer)
-    form.resetFields()
-    messageApi.open({
-      type: 'success',
-      content: 'Thêm khách hàng thành công',
-    });
-
+    let newCustomer = {
+          firstname : values.firstname ? values.firstname : "",
+          lastname : values.lastname ? values.lastname: "",
+          phone : values.phone ?  values.phone : "",
+          email : values.email ? values.email : "",
+          mailingstreet : values.mailingstreet ? values.mailingstreet : "",
+          birthday : values.birthday ? values.birthday : ""
+    }
+    //form.resetFields()
     //Post api
-    axios.post(`${process.env.REACT_APP_API_URL}/modules/RestfulApi/Contacts/${Key}`, postCustomer,
-      {
-      headers: {
-        // "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      }
-    })
+    axios.post(`${process.env.REACT_APP_API_URL}/modules/RestfulApi/Contacts/${Key}`, new URLSearchParams(newCustomer))
       .then(res => {
+        messageApi.open({
+          type: 'success',
+          content: 'Thêm khách hàng thành công',
+        });
         console.log(res);
-        console.log(res.data);
       })
       .catch(err => {
+        messageApi.open({
+          type: 'error',
+          content: 'Lỗi khi thêm khách hàng, ' + err.message,
+        });
         console.log(err);
       })
   }
@@ -146,7 +140,7 @@ const onFinish = (values) => {
             <Form.Item
               label="Tên"
               name="lastname"
-              rules={[{ required: true, message: 'Hãy nhập tên của bạn!' }]}
+              rules={[{ required: true, message: 'Tên khách hàng là bắt buộc!' }]}
               >
               <Input placeholder='Nhập tên'/>
             </Form.Item>
