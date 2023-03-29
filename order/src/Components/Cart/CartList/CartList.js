@@ -45,6 +45,7 @@ function CartList(props) {
         setData(item);
       } else {
         props.addToCart.note = "";
+        props.addToCart.productListPrice =  props.addToCart.price;
         props.addToCart.amount = "";
         props.addToCart.percent = "";
         cart.push(props.addToCart);
@@ -89,6 +90,7 @@ function CartList(props) {
         index: index,
         rowId: element.id, 
         basePrice: element.purchase_cost,
+        productListPrice: element.productListPrice,
         statePrice: element.price,
         err: false,
     };
@@ -135,8 +137,8 @@ function CartList(props) {
         }
         
     const onChangePercent = (value) => {
-        setDiscountPrice({amount: "", percent: value});
-        let updatePrice = price.statePrice - ((price.statePrice * value) / 100)
+        let updatePrice = price.productListPrice - ((price.productListPrice * value) / 100)
+        setDiscountPrice({amount: updatePrice, percent: value});
         if(updatePrice < price.basePrice) {
           let newPrice = {...price}
           newPrice.err = true;
@@ -370,7 +372,7 @@ function CartList(props) {
       >
         <Input
           placeholder="Đơn giá"
-          value = {Helper.convertToVnd(parseInt(newStatePrice))}
+          value = {Helper.convertToVnd(parseInt(price.productListPrice))}
           style={{ width: '100%', marginBottom: 12, fontWeight: 'bold' }}
           disabled
         />

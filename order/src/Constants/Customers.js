@@ -13,12 +13,13 @@ async function getCustomers() {
   return data.result;
 }
 
-const cumstomersList = await getCustomers();
+const customersList = await getCustomers();
 const Customers = [];
 
-cumstomersList.map(elm => {
+customersList.map(elm => {
   var customer = new Customer();
-  customer.account_id = elm.account_id;
+  customer.record_id = elm.record_id;
+  customer.tempId = elm.record_id;
   customer.firstname = elm.firstname;
   customer.lastname = elm.lastname;
   customer.label = elm.label;
