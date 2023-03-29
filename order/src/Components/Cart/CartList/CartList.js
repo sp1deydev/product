@@ -36,6 +36,7 @@ function CartList(props) {
   const [discountPrice, setDiscountPrice] = useState({amount: "", percent: ""});
   const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
+    console.log("add")
     if (props.addToCart !== 1) {
       let cart = [...data];
       let index = cart.findIndex((item) => item.id === props.addToCart.id);
