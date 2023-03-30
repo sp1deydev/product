@@ -11,11 +11,10 @@ function App() {
 
   //++++++++++++++++++++++++++++++++++++++++++++++
   const initialItems = [
-    { label: 'Tab 1', children: 'Content of Tab 1', key: '1' },
     {
-      label: 'Hoa don 2',
+      label: 'Hóa đơn 1',
       children: <BodyContent/>,
-      key: '2',
+      key: '1',
       closable: false,
     },
   ];
@@ -30,7 +29,7 @@ function App() {
     const add = () => {
       const newActiveKey = `newTab${newTabIndex.current++}`;
       const newPanes = [...items];
-      newPanes.push({ label: 'New Tab', children: 'Content of new Tab', key: newActiveKey });
+      newPanes.push({ label: `Hóa đơn ${newTabIndex.current+1}`, children: <BodyContent/>, key: newActiveKey });
       setItems(newPanes);
       setActiveKey(newActiveKey);
     };

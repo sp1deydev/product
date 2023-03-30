@@ -1,5 +1,5 @@
 .ant-table-body {
-    min-height: calc(100vh - 136px);
+    min-height: calc(100vh - 144px);
 }
 
 .ant-table-thead {
@@ -7,10 +7,10 @@
 }
 
 .ant-table-tbody{
-    padding: 16px 4px !important;
-  }
+  padding: 16px 4px !important;
+}
 .ant-table-tbody > tr > td.ant-table-cell {
-    padding: 16px 4px !important;
+  padding: 16px 4px !important;
 }
 
 .note {
