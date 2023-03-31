@@ -8,30 +8,35 @@ const { Header, Content, Footer } = Layout;
 
 function App() {
   //STATE
-
-  //++++++++++++++++++++++++++++++++++++++++++++++
+  const [currentTabId, setCurrentTabId] = useState("new")
   const initialItems = [
     {
       label: 'Hóa đơn 1',
-      children: <BodyContent/>,
-      key: '1',
+      children: <BodyContent currentTabId={currentTabId} tabId={0}/>,
+      key: 0,
       closable: false,
     },
   ];
-    const [activeKey, setActiveKey] = useState(initialItems[0].key);
-    const [items, setItems] = useState(initialItems);
-    const newTabIndex = useRef(0);
+  const [activeKey, setActiveKey] = useState(initialItems[0].key);
+  const [items, setItems] = useState(initialItems);
+  const newTabIndex = useRef(1);
+  
+  //++++++++++++++++++++++++++++++++++++++++++++++
   
     const onChange = (newActiveKey) => {
+      console.log("current ID", currentTabId)
+      setCurrentTabId(newActiveKey)
       setActiveKey(newActiveKey);
     };
   
     const add = () => {
-      const newActiveKey = `newTab${newTabIndex.current++}`;
+      newTabIndex.current++
       const newPanes = [...items];
-      newPanes.push({ label: `Hóa đơn ${newTabIndex.current+1}`, children: <BodyContent/>, key: newActiveKey });
+      console.log(`adding ${newTabIndex.current}`)
+      newPanes.push({ label: `Hóa đơn ${newTabIndex.current}`, children: <BodyContent currentTabId={newTabIndex.current} tabId={newTabIndex.current}/>, key: newTabIndex.current });
       setItems(newPanes);
-      setActiveKey(newActiveKey);
+      setActiveKey(newTabIndex.current);
+      setCurrentTabId(newTabIndex.current)
     };
   
     const remove = (targetKey) => {
@@ -52,6 +57,7 @@ function App() {
       }
       setItems(newPanes);
       setActiveKey(newActiveKey);
+      setCurrentTabId(newActiveKey);
     };
   
     const onEdit = (targetKey, action) => {

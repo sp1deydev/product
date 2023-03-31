@@ -52,3 +52,8 @@ Header {
 .ant-tabs-tab-active {
   background-color: #fff !important;
 }
+
+.ant-tabs-nav .ant-tabs-nav-more {
+  color: white;
+  display: none;
+}

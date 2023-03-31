@@ -26,6 +26,7 @@ const { TextArea } = Input;
 
 function CartList(props) {
   //STATE
+  const [listData, setListData] = useState({ tabId: props.tabId, data: [] });
   const [data, setData] = useState([]);
   //open note
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -33,10 +34,18 @@ function CartList(props) {
   const [openPopover, setOpenPopover] = useState([]);
   const [price, setPrice] = useState({});
   const [newStatePrice, setNewStatePrice] = useState();
-  const [discountPrice, setDiscountPrice] = useState({amount: "", percent: ""});
+  const [discountPrice, setDiscountPrice] = useState({
+    amount: "",
+    percent: "",
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
-    console.log("add")
+    console.log('cartList', props.currentTabId);
+  }, [props.currentTabId])
+
+  useEffect(() => {
+    console.log("type of data", data);
     if (props.addToCart !== 1) {
       let cart = [...data];
       let index = cart.findIndex((item) => item.id === props.addToCart.id);
@@ -46,7 +55,7 @@ function CartList(props) {
         setData(item);
       } else {
         props.addToCart.note = "";
-        props.addToCart.productListPrice =  props.addToCart.price;
+        props.addToCart.productListPrice = props.addToCart.price;
         props.addToCart.amount = "";
         props.addToCart.percent = "";
         cart.push(props.addToCart);
@@ -86,81 +95,73 @@ function CartList(props) {
     setData(temp);
   };
   const showModal = (element) => {
-    let index = data.findIndex((data) => data.id === element.id)
+    let index = data.findIndex((data) => data.id === element.id);
     let price = {
-        index: index,
-        rowId: element.id, 
-        basePrice: element.purchase_cost,
-        productListPrice: element.productListPrice,
-        statePrice: element.price,
-        err: false,
+      index: index,
+      rowId: element.id,
+      basePrice: element.purchase_cost,
+      productListPrice: element.productListPrice,
+      statePrice: element.price,
+      err: false,
     };
-    setDiscountPrice({amount: data[index].amount, percent: data[index].percent})
+    setDiscountPrice({
+      amount: data[index].amount,
+      percent: data[index].percent,
+    });
     setPrice(price);
     setIsModalOpen(true);
-    setNewStatePrice(element.price)
+    setNewStatePrice(element.price);
   };
 
   const handleCancel = () => {
-    if(price.err === false) {
-      let index = data.findIndex(element => element.id === price.rowId)
-      let newData = [...data]
+    if (price.err === false) {
+      let index = data.findIndex((element) => element.id === price.rowId);
+      let newData = [...data];
       newData[index].price = newStatePrice;
       newData[index].amount = discountPrice.amount;
       newData[index].percent = discountPrice.percent;
-      setData(newData)
+      setData(newData);
       setIsModalOpen(false);
+    } else setIsModalOpen(true);
+  };
+  //change amout
+  const onChangeAmount = (value) => {
+    setDiscountPrice({ amount: value, percent: "" });
+    let updatePrice = value;
+    if (value === null) updatePrice = 0;
+    if (updatePrice < price.basePrice) {
+      let newPrice = { ...price };
+      newPrice.err = true;
+      setPrice(newPrice);
+      if (updatePrice < 0) setNewStatePrice(0);
+      else setNewStatePrice(updatePrice);
+    } else {
+      let newPrice = { ...price };
+      newPrice.err = false;
+      setPrice(newPrice);
+      setNewStatePrice(updatePrice);
     }
-    else
-      setIsModalOpen(true);
-   };
-   //change amout
-   const onChangeAmount = (value) => {      
-        setDiscountPrice({amount: value, percent: ""});
-        let updatePrice = value
-        if(value === null)
-          updatePrice = 0
-        if(updatePrice < price.basePrice) {
-            let newPrice = {...price}
-            newPrice.err = true;
-            setPrice(newPrice)
-            if(updatePrice < 0)
-                setNewStatePrice(0)
-            else
-                setNewStatePrice(updatePrice)
-        }
-        else {
-            let newPrice = {...price}
-            newPrice.err = false;
-            setPrice(newPrice)
-            setNewStatePrice(updatePrice)
-          }
-        }
-        
-    const onChangePercent = (value) => {
-        let updatePrice = price.productListPrice - ((price.productListPrice * value) / 100)
-        setDiscountPrice({amount: updatePrice, percent: value});
-        if(updatePrice < price.basePrice) {
-          let newPrice = {...price}
-          newPrice.err = true;
-          setPrice(newPrice)
-            if(updatePrice < 0)
-            setNewStatePrice(0)
-            else
-            setNewStatePrice(updatePrice)
-          }
-          else {
-            let newPrice = {...price}
-            newPrice.err = false;
-            setPrice(newPrice)
-            setNewStatePrice(updatePrice)
-          }
-        }
-        
-        
+  };
 
+  const onChangePercent = (value) => {
+    let updatePrice =
+      price.productListPrice - (price.productListPrice * value) / 100;
+    setDiscountPrice({ amount: updatePrice, percent: value });
+    if (updatePrice < price.basePrice) {
+      let newPrice = { ...price };
+      newPrice.err = true;
+      setPrice(newPrice);
+      if (updatePrice < 0) setNewStatePrice(0);
+      else setNewStatePrice(updatePrice);
+    } else {
+      let newPrice = { ...price };
+      newPrice.err = false;
+      setPrice(newPrice);
+      setNewStatePrice(updatePrice);
+    }
+  };
 
-    //Toggle expand note
+  //Toggle expand note
   const handleToggleExpand = (element) => {
     let index = expandedKeys.findIndex((item) => item === element.id);
 
@@ -338,33 +339,33 @@ function CartList(props) {
   });
   return (
     <React.Fragment>
-    <Table
-      columns={columns}
-      dataSource={dataSource}
-      pagination={false}
-      scroll={{ y: 10 }}
-      footer={() => <CartFooter cartData={data}/>}
-      expandable={{
-        rowExpandable: (record) => true,
-        expandedRowRender: (record) => {
-          return (
-            <TextArea
-              rows={1}
-              placeholder="Ghi chú cho sản phẩm"
-              maxLength={200}
-              onChange={(event) => {
-                onNote(event, record);
-              }}
-              style={{}}
-              className="note"
-            />
-          );
-        },
-      }}
-      expandIconColumnIndex={-1}
-      expandedRowKeys={expandedKeys}
-    />
-    <Modal
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        pagination={false}
+        scroll={{ y: 10 }}
+        footer={() => <CartFooter cartData={data} />}
+        expandable={{
+          rowExpandable: (record) => true,
+          expandedRowRender: (record) => {
+            return (
+              <TextArea
+                rows={1}
+                placeholder="Ghi chú cho sản phẩm"
+                maxLength={200}
+                onChange={(event) => {
+                  onNote(event, record);
+                }}
+                style={{}}
+                className="note"
+              />
+            );
+          },
+        }}
+        expandIconColumnIndex={-1}
+        expandedRowKeys={expandedKeys}
+      />
+      <Modal
         title="Điều chỉnh giá bán"
         open={isModalOpen}
         onCancel={handleCancel}
@@ -373,30 +374,38 @@ function CartList(props) {
       >
         <Input
           placeholder="Đơn giá"
-          value = {Helper.convertToVnd(parseInt(price.productListPrice))}
-          style={{ width: '100%', marginBottom: 12, fontWeight: 'bold' }}
+          value={Helper.convertToVnd(parseInt(price.productListPrice))}
+          style={{ width: "100%", marginBottom: 12, fontWeight: "bold" }}
           disabled
         />
         <InputNumber
-            placeholder="Giá mới "
-            value={discountPrice.amount}
-            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            style={{ width: '100%', marginBottom: 12 }}
-            onChange={onChangeAmount}
+          placeholder="Giá mới "
+          value={discountPrice.amount}
+          formatter={(value) =>
+            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          }
+          style={{ width: "100%", marginBottom: 12 }}
+          onChange={onChangeAmount}
         />
         <InputNumber
-            placeholder="Giảm giá theo %"
-            value={discountPrice.percent}
-            style={{ width: '100%', marginBottom: 12 }}
-            onChange={onChangePercent}
+          placeholder="Giảm giá theo %"
+          value={discountPrice.percent}
+          style={{ width: "100%", marginBottom: 12 }}
+          onChange={onChangePercent}
         />
-        
-        {price.err ? <Tag icon={<CloseCircleOutlined />} hidden={price.err} color="error" style={{ width: '100%'}}>
-                Giá bán đang nhỏ hơn giá vốn
-            </Tag> 
-            :
-            ""
-        }
+
+        {price.err ? (
+          <Tag
+            icon={<CloseCircleOutlined />}
+            hidden={price.err}
+            color="error"
+            style={{ width: "100%" }}
+          >
+            Giá bán đang nhỏ hơn giá vốn
+          </Tag>
+        ) : (
+          ""
+        )}
       </Modal>
     </React.Fragment>
   );

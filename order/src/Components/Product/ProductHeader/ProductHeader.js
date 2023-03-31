@@ -39,13 +39,10 @@ function ProductHeader(props) {
   };
 
   useEffect(() => {
-    console.log(listCustomers)
     let data = listCustomers.map(element => {
       return {value: element.tempId, label: element.label}
     });
     setDataList(data)
-    console.log("data",data)
-    console.log("add",addCustomer)
   }, [addCustomer])
 
   //create list of categories
@@ -68,10 +65,7 @@ function ProductHeader(props) {
 
 
   const onChangeCustomer = (value, label) => {
-    // console.log("onChangeCustomer", value);
     setCurrentCustomers(label)
-    console.log("onChangeCustomer", label);
-    console.log("onChangeCustomerCUrrennt", currentCustomers);
     setOpenSearchCustomer(false);
   }
   const onSearchCustomer = (value) => {
@@ -85,7 +79,6 @@ function ProductHeader(props) {
   }
 
 const onFinish = (values) => {
-    console.log('Success:', values);
     let newCustomer = {
           tempId: Date.now(),
           firstname : values.firstname ? values.firstname : "",
