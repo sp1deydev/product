@@ -12,6 +12,7 @@ function BodyContent(props) {
 
     //ACTION 
     //add to cart action
+    const onAddToCart = (product) => {
         console.log("addToCart",addToCart)
         console.log("changeValue",changeValue)
         console.log(product)
