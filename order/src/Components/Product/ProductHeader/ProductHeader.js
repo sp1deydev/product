@@ -16,7 +16,11 @@ function ProductHeader(props) {
   const [category, setCategory] = useState(undefined)
   const items = [...ProductCategories];
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [listCustomers, setListCustomers] = useState([])
+  const [addCustomer, setAddCustomer] = useState(true); //variable to get new Customers when add a customer by post api
+  const [listCustomers, setListCustomers] = useState(Customers)
+  const [dataList, setDataList] = useState([])
+  const [currentCustomers, setCurrentCustomers] = useState()
+  const [openSearchCustomer, setOpenSearchCustomer] = useState(false)
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -35,11 +39,11 @@ function ProductHeader(props) {
   };
 
   useEffect(() => {
-    let data = Customers.map(element => {
-      return {value: element.account_id, label: element.label}
+    let data = listCustomers.map(element => {
+      return {value: element.tempId, label: element.label}
     });
-    setListCustomers(data)
-  }, [Customers])
+    setDataList(data)
+  }, [addCustomer])
 
   //create list of categories
   const filterData = items.map(element => {
@@ -60,21 +64,32 @@ function ProductHeader(props) {
   }
 
 
-  const onChangeCustomer = (value) => {
-    console.log("onChangeCustomer", value);
+  const onChangeCustomer = (label,value) => {
+    setCurrentCustomers(value)
+    props.setCurrentCus(value)
+    setOpenSearchCustomer(false);
+  }
+  const onSearchCustomer = (value) => {
+    if(value === "") {
+      setOpenSearchCustomer(false);
+      setCurrentCustomers()
+    }
+    else {
+      setOpenSearchCustomer(true);
+    }
   }
 
 const onFinish = (values) => {
-    console.log('Success:', values);
     let newCustomer = {
+          tempId: Date.now(),
           firstname : values.firstname ? values.firstname : "",
           lastname : values.lastname ? values.lastname: "",
           phone : values.phone ?  values.phone : "",
           email : values.email ? values.email : "",
           mailingstreet : values.mailingstreet ? values.mailingstreet : "",
-          birthday : values.birthday ? values.birthday : ""
+          birthday : values.birthday ? values.birthday : "",
+          label : ((values.firstname ? values.firstname : "") + " " + values.lastname) ? ((values.firstname ? values.firstname : "") + " " + values.lastname) : ""
     }
-    //form.resetFields()
     //Post api
     axios.post(`${process.env.REACT_APP_API_URL}/modules/RestfulApi/Contacts/${Key}`, new URLSearchParams(newCustomer))
       .then(res => {
@@ -82,7 +97,14 @@ const onFinish = (values) => {
           type: 'success',
           content: 'Thêm khách hàng thành công',
         });
+        form.resetFields()
         console.log(res);
+        let newListCustomers = [...listCustomers]
+        newListCustomers.push(newCustomer);
+        setCurrentCustomers({value: newCustomer.tempId, label: newCustomer.label})
+        setListCustomers(newListCustomers)
+        setAddCustomer(!addCustomer);
+        setIsModalOpen(false)
       })
       .catch(err => {
         messageApi.open({
@@ -107,15 +129,17 @@ const onFinish = (values) => {
         allowClear
         listHeight={160}
         placeholder="Tên khách hàng"
+        value={currentCustomers}
         optionFilterProp="children"
         style={{ minWidth: '170px', marginRight: '4px' }}
+        popupClassName = {openSearchCustomer ? 'display' : 'hide'}
         onChange={onChangeCustomer}
-        // onSearch={onSearch}
-        filterOption={(input, option) =>
+        onSearch={onSearchCustomer}
+        filterOption={(input, option) => 
           (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
         }
-        options={listCustomers}
-        />
+        options={dataList}
+      />
 
       <Button icon={<UserAddOutlined />} style={{ marginRight: '4px' }} onClick={showModal}/>
       <Modal title="Thêm khách hàng" 
@@ -160,7 +184,7 @@ const onFinish = (values) => {
               label="Email"
               name="email"
               rules={[{ type: 'email', message: 'Email không hợp lệ' }]}
-              >
+            >
               <Input placeholder='Nhập email'/>
             </Form.Item>
             <Form.Item

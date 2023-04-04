@@ -1,44 +1,88 @@
 import './App.css';
-import { Layout, Menu, Col, Row, Input } from 'antd';
+import { Layout, Menu, Col, Row, Input, Tabs } from 'antd';
 import Product from '../Product/Product';
 import Cart from '../Cart/Cart';
-import { useState } from 'react';
+import BodyContent from '../BodyContent/BodyContent';
+import { useState, useRef } from 'react';
 const { Header, Content, Footer } = Layout;
 
 function App() {
   //STATE
-  const [addToCart, setAddToCart] = useState(1);
-  //giá trị thay đổi để useEffect của component CartList chạy
-  const [changeValue, setChangeValue] = useState(0);
+  const [currentTabId, setCurrentTabId] = useState("new")
+  const initialItems = [
+    {
+      label: 'Hóa đơn 1',
+      children: <BodyContent currentTabId={currentTabId} tabId={0}/>,
+      key: 0,
+      closable: false,
+    },
+  ];
+  const [activeKey, setActiveKey] = useState(initialItems[0].key);
+  const [items, setItems] = useState(initialItems);
+  const newTabIndex = useRef(1);
+  
+  //++++++++++++++++++++++++++++++++++++++++++++++
+  
+    const onChange = (newActiveKey) => {
+      console.log("current ID", currentTabId)
+      setCurrentTabId(newActiveKey)
+      setActiveKey(newActiveKey);
+    };
+  
+    const add = () => {
+      newTabIndex.current++
+      const newPanes = [...items];
+      console.log(`adding ${newTabIndex.current}`)
+      newPanes.push({ label: `Hóa đơn ${newTabIndex.current}`, children: <BodyContent currentTabId={newTabIndex.current} tabId={newTabIndex.current}/>, key: newTabIndex.current });
+      setItems(newPanes);
+      setActiveKey(newTabIndex.current);
+      setCurrentTabId(newTabIndex.current)
+    };
+  
+    const remove = (targetKey) => {
+      let newActiveKey = activeKey;
+      let lastIndex = -1;
+      items.forEach((item, i) => {
+        if (item.key === targetKey) {
+          lastIndex = i - 1;
+        }
+      });
+      const newPanes = items.filter((item) => item.key !== targetKey);
+      if (newPanes.length && newActiveKey === targetKey) {
+        if (lastIndex >= 0) {
+          newActiveKey = newPanes[lastIndex].key;
+        } else {
+          newActiveKey = newPanes[0].key;
+        }
+      }
+      setItems(newPanes);
+      setActiveKey(newActiveKey);
+      setCurrentTabId(newActiveKey);
+    };
+  
+    const onEdit = (targetKey, action) => {
+      if (action === 'add') {
+        add();
+      } else {
+        remove(targetKey);
+      }
+    };
 
-  //ACTION 
-  //add to cart action
-  const onAddToCart = (product) => {
-    if(changeValue === 2)
-      setChangeValue(0);
-    setChangeValue(changeValue + 1);
-    setAddToCart(product);
-  };
-
+  //==============================================
   return (
     <div className="App">
       <Layout className="layout">
       <Header>
         <Input className="logo" placeholder="Search" />
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={['2']}
-          items={new Array(1).fill(null).map((_, index) => {
-            const key = index + 1;
-            return {
-              key,
-              label: `Bill ${key}`,
-            };
-          })}
+        <Tabs
+          type="editable-card"
+          onChange={onChange}
+          activeKey={activeKey}
+          onEdit={onEdit}
+          items={items}
         />
       </Header>
-      <Content style={{background: 'grey'}}>
+      {/* <Content style={{background: 'grey'}}>
         <div className="site-layout-content">
         <Row gutter={8}>
           <Col span={13} >
@@ -53,7 +97,7 @@ function App() {
           </Col>
         </Row>
         </div>
-      </Content>
+      </Content> */}
     </Layout>
     </div>
   );

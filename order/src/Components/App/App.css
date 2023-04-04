@@ -23,3 +23,37 @@
   border-radius: 10px;
   box-shadow: 1px 1px 1px #AAA;
 }
+
+Header {
+  color: #fff;
+  background-color: #33425B !important;
+}
+
+.ant-tabs-nav-add, .ant-tabs-tab-remove, .ant-tabs-nav-wrap .ant-tabs-tab {
+  color: #fff !important
+}
+
+.ant-tabs-content{
+  min-width: 100vw !important;
+  margin-left: -274px;
+  margin-top: -16px;
+}
+
+.ant-tabs-nav-wrap {
+  margin-top: 4px;
+}
+.ant-tabs-tab-active .ant-tabs-tab-remove {
+  color: #1677ff !important
+}
+.ant-tabs-tab {
+  height: 60px;
+  background-color: #33425B !important;
+}
+.ant-tabs-tab-active {
+  background-color: #fff !important;
+}
+
+.ant-tabs-nav .ant-tabs-nav-more {
+  color: white;
+  display: none;
+}
