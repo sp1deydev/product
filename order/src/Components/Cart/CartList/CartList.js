@@ -41,7 +41,7 @@ function CartList(props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    console.log('cartList', props.currentTabId);
+    console.log('currentTabId', props.currentTabId);
   }, [props.currentTabId])
 
   useEffect(() => {
@@ -53,6 +53,7 @@ function CartList(props) {
         let item = [...data];
         item[index].quantity++;
         setData(item);
+        props.updateCartItems(item);
       } else {
         props.addToCart.note = "";
         props.addToCart.productListPrice = props.addToCart.price;
@@ -62,9 +63,11 @@ function CartList(props) {
         let popover = [...openPopover];
         popover.push(false);
         setOpenPopover(popover);
-        setData(cart);
+        setData(cart);    
+        props.updateCartItems(cart);  
       }
     }
+   
   }, [props.changeValue]);
 
   //ACTION
@@ -75,8 +78,8 @@ function CartList(props) {
     let temp = [...data];
     temp[index].quantity = 1;
     temp.splice(index, 1);
-    console.log("delete", temp);
     setData(temp);
+    props.updateCartItems(temp);
   };
   //DECREASE QUANTITY OF PRODUCT
   const handleMinus = (id) => {
@@ -85,6 +88,7 @@ function CartList(props) {
     if (temp[index].quantity > 1) temp[index].quantity--;
     console.log("minus", temp);
     setData(temp);
+    props.updateCartItems(temp);
   };
 
   //INCREASE QUANTITY OF PRODUCT
@@ -92,7 +96,9 @@ function CartList(props) {
     let index = data.findIndex((data) => data.id === id);
     let temp = [...data];
     if (temp[index].quantity < 100) temp[index].quantity++;
+    console.log("added data:", temp);
     setData(temp);
+    props.updateCartItems(temp);
   };
   const showModal = (element) => {
     let index = data.findIndex((data) => data.id === element.id);

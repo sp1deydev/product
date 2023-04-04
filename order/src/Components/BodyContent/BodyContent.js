@@ -9,7 +9,7 @@ function BodyContent(props) {
     const [addToCart, setAddToCart] = useState(1);
     //giá trị thay đổi để useEffect của component CartList chạy
     const [changeValue, setChangeValue] = useState(0);
-
+    const [cartItems, setCartItems] = useState([]);
     //ACTION 
     //add to cart action
     const onAddToCart = (product) => {
@@ -20,9 +20,12 @@ function BodyContent(props) {
         setChangeValue(0);
         setChangeValue(changeValue + 1);
         setAddToCart(product);
+        setCartItems(product);
         console.log("end")
     };
-
+    function  updateCartItems(data) {
+        setCartItems(data);
+    }
 
 return (
     <Content style={{background: 'grey'}}>
@@ -30,12 +33,12 @@ return (
         <Row gutter={8}>
             <Col span={13} >
             <div className="main-content-display">
-                <Cart addToCart={addToCart} changeValue={changeValue} currentTabId={props.currentTabId} tabId={props.tabId}/>
+                <Cart addToCart={addToCart} updateCartItems={updateCartItems}  changeValue={changeValue} currentTabId={props.currentTabId} tabId={props.tabId}/>
             </div>
             </Col>
             <Col span={11}>
             <div className="main-content-display">
-                <Product onAddToCart={onAddToCart}/> {/* has bug */}
+                <Product onAddToCart={onAddToCart} updateCartItems={updateCartItems}  CartItems = {cartItems}/> {/* has bug */}
             </div>
             </Col>
         </Row>

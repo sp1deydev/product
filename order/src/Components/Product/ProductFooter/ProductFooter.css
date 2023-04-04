@@ -6,3 +6,58 @@
     width: 180px;
     height: 40px;
 }
+.text-bg-default {
+    text-align: center;
+    border: 1px solid transparent;
+    color: #111;
+    background-color: rgb(31 96 78 / 10%);
+    font-size: 1.2rem;
+    padding: 0 10px;
+    border-radius: 999px;
+}
+.amount-total-cart{
+    float: right;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+.discount-amount{
+    width: 200px;
+    float: right;
+    text-align:right;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+.ant-form-item .ant-row .ant-col label{
+    text-align: left;
+}
+.payModal {
+    height: 100vh;
+    top: 0;
+    right: 0;
+    position: absolute;
+    width: 460;
+    margin-right: -6px;
+}
+.custom-button-size{
+    margin-left: 20px;
+    width: 270px;
+    height: 45px;
+}
+.payModal .ant-modal-footer {
+    text-align: center;
+    background: transparent;
+    margin-top: 480px;
+}
+.cart-cus-input {
+    outline: 0;
+    border-width: 0 0 2px;
+    border-color: rgb(60, 244, 180)
+  }
+.cart-cus-input:focus {
+    border-color: green;
+    outline: 1px dotted #000
+}
+.ant-input-number-input{
+    border: 0;
+    border-radius: 0px;
+}

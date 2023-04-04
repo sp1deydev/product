@@ -64,8 +64,9 @@ function ProductHeader(props) {
   }
 
 
-  const onChangeCustomer = (value, label) => {
-    setCurrentCustomers(label)
+  const onChangeCustomer = (label,value) => {
+    setCurrentCustomers(value)
+    props.setCurrentCus(value)
     setOpenSearchCustomer(false);
   }
   const onSearchCustomer = (value) => {
