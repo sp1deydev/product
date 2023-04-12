@@ -119,6 +119,11 @@ const onFinish = (values) => {
     console.log('Failed:', errorInfo);
   };
 
+  const productSearch = (e) => {
+    props.getProduct(e.target.value);
+    //console.log(e.target.value == "");
+  };
+
   // ********************************
   return (
     <div className="container-product-header">
@@ -221,6 +226,13 @@ const onFinish = (values) => {
         onChange={onChangeFilter}
         options={filterData}
       />
+
+      <Input 
+        style={{ width: 'fit-content', minWidth: '100px' }} 
+        placeholder="Tên thuốc"
+        onChange={productSearch}
+      />
+
       <div className="group-btn">
         <Button type='ghost' shape='circle' icon={iconBtns.list}></Button>
         <Button type='ghost' shape='circle' icon={iconBtns.filter} className='btn'></Button>
