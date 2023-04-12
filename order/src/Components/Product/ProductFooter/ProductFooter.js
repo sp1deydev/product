@@ -18,7 +18,7 @@ function ProductFooter(props) {
   const showModal = () => {
     setIsModalOpen(true);
   };
-  const { CartItems, currentCustomers } = props;
+  const { CartItems, notes, currentCustomers } = props;
   const optionsDiscountType = [
     { label: "VND", value: "VND" },
     { label: "%", value: "Pecent" },
@@ -66,14 +66,17 @@ function ProductFooter(props) {
     }
     let customerId =
     currentCustomers.value > 0 ? currentCustomers.value : 0;
-    const currentDate = moment(new Date(), 'YYYY-MM-DD')
+    const currentDate = moment(new Date()).format('YYYY-MM-DD')
     let newInvoice = {
-      items: inventoryItems,
-      subject: "Hóa đơn bán hàng",
-      contactid: customerId,
+      items: JSON.stringify(inventoryItems),
+      subject: "Hóa đơn bán hàng " + moment(new Date()).format('DD-MM-YYYY HH:MM:SS'),
+      contact_id: customerId,
       invoicedate:  currentDate,
       duedate:  currentDate,
       subtotal: finalTotalPrice,
+      description: notes,
+      currency_id: 2,
+      conversion_rate: 1,
       total: finalTotalPrice
     };
     //Post api
