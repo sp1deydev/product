@@ -1,10 +1,8 @@
 import './App.css';
 import { Layout, Menu, Col, Row, Input, Tabs } from 'antd';
-import Product from '../Product/Product';
-import Cart from '../Cart/Cart';
 import BodyContent from '../BodyContent/BodyContent';
 import { useState, useRef } from 'react';
-const { Header, Content, Footer } = Layout;
+const { Header} = Layout;
 
 function App() {
   //STATE
