@@ -5,6 +5,7 @@ import React, { useState } from "react"
 
 function Product(props) {
     const [type, setType] = useState(""); //catagory variable
+    const [name, setName] = useState(""); //name variable
     const [currentCustomers, setCurrentCustomers] = useState([]); //current Customers
 
     const onAddToCart = (product) => {
@@ -15,13 +16,17 @@ function Product(props) {
     const getCategory = (category) => {
         setType(category);
     }
+    //get product name to search
+    const getProduct = (name) => {
+        setName(name);
+    }
     function setCurrentCus(cus){
         setCurrentCustomers(cus);
     }
     return (
         <React.Fragment>
-            <ProductHeader setCurrentCus = {setCurrentCus} getCategory={getCategory}/>
-            <ProductList onAddToCart={onAddToCart} category={type} />
+            <ProductHeader setCurrentCus = {setCurrentCus} getCategory={getCategory} getProduct={getProduct}/>
+            <ProductList onAddToCart={onAddToCart} category={type} product={name}/>
             <ProductFooter CartItems = {props.CartItems} currentCustomers = {currentCustomers} />
         </React.Fragment>
     );

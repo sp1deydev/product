@@ -20,7 +20,19 @@ function ProductList(props) {
             })
             setCategoriesProducts(data);
         }
-    }, [props.category])
+
+        if (props.product === "") {
+            
+        }
+        else {
+            let data = Products.filter(element => {
+                if (element.name.includes(props.product)) {
+                    return element;
+                }
+            });
+            setCategoriesProducts(data);
+        }
+    }, [props.category, props.product])
 
     const productsPerPage = 18; //how many products per page
     const [currentPage, setCurrentPage] = useState(1);
