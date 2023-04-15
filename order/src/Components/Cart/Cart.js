@@ -1,5 +1,4 @@
 import React from "react"
-import CartFooter from "./CartFooter/CartFooter"
 import CartList from "./CartList/CartList"
 
 

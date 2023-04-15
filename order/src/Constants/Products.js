@@ -1,15 +1,13 @@
-class Product {
-  constructor() {
-      this.quantity = 1;
-      this.isOnCart = false;
-  }
-}
-
+/* eslint-disable array-callback-return */
 async function getProducts() {
-  var response = await fetch(`${process.env.REACT_APP_API_URL}modules/RestfulApi/index.php?module=Auth&key=${process.env.REACT_APP_API_KEY}`);
+  var response = await fetch(
+    `${process.env.REACT_APP_API_URL}modules/RestfulApi/index.php?module=Auth&key=${process.env.REACT_APP_API_KEY}`
+  );
   var data = await response.json();
 
-  response = await fetch(`${process.env.REACT_APP_API_URL}modules/RestfulApi/Products/start/0/length/20/order/vtiger_products.productid/DESC/${data.result}`);
+  response = await fetch(
+    `${process.env.REACT_APP_API_URL}modules/RestfulApi/Products/start/0/length/20/order/vtiger_products.productid/DESC/${data.result}`
+  );
   data = await response.json();
   return data.result;
 }
@@ -17,16 +15,21 @@ async function getProducts() {
 const dataList = await getProducts();
 const Products = [];
 
-dataList.map(elem => {
-  var product = new Product();
-  product.id = elem.record_id;
-  product.name = elem.productname;
-  product.image = elem.imagename;
-  product.price = elem.unit_price;
-  product.purchase_cost = elem.purchase_cost;
-  product.category = elem.productcategory
-
-  Products.push(product);
+dataList.map((elem) => {
+  Products.push({
+    id: elem.record_id,
+    name: elem.productname,
+    image: elem.imagename,
+    price: elem.unit_price,
+    display_price: elem.unit_price,
+    purchase_cost: elem.purchase_cost,
+    category: elem.productcategory,
+    quantity: 1,
+    discount_amount: 0,
+    discount_percent: 0,
+    note: '',
+    isOnCart: false,
+  });
 });
 
-export default Products
+export default Products;
