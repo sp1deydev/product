@@ -2,10 +2,12 @@ import './ProductList.css'
 import Products from '../../../Constants/Products';
 import { Col, Row, Avatar, Card, Pagination} from 'antd';
 import { useEffect, useState } from 'react';
-
+import { useDispatch, useSelector } from "react-redux";
+import { addItem } from '../../Cart/cartSlice'
 
 function ProductList(props) {
     const [categoryProducts, setCategoriesProducts] = useState([]);
+    const tab = useSelector((state) => state.tab);
     useEffect(() => {
         //category product list
         if(props.category === "") {
@@ -30,7 +32,9 @@ function ProductList(props) {
 
     //get 12 product per page
     const displayProducts = categoryProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-    
+    //Using redux
+    const dispatch = useDispatch()
+
     // event when you change page
     const onChangePage = (page) => {     
         setCurrentPage(page);
@@ -38,7 +42,8 @@ function ProductList(props) {
 
     // add to cart action 
     const addToCart = (product) => {
-        props.onAddToCart(product);
+        //props.onAddToCart(product);
+        dispatch(addItem({product:product,tabId:tab.currentTabId}))
     };
 
     //create var items to store products list ui

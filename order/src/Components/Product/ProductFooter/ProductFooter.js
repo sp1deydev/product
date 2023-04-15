@@ -1,11 +1,14 @@
 import "./ProductFooter.css";
-import { Button, Modal, Input, Form, Radio, message, InputNumber } from "antd";
+import { Button, Modal, Form, Radio, message, InputNumber } from "antd";
 import { useState, useEffect } from "react";
 import Helper from "./../../../Common/Helper";
 import Key from "../../../Constants/GetAuthKey";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import moment from 'moment';
-
+import moment from "moment";
+//clearCart
+import { clearCart } from "../../Cart/cartSlice";
+import { closeTab } from "../../Cart/tabSlice";
 function ProductFooter(props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [finalTotalPrice, setFinalTotalPrice] = useState(0);
@@ -14,11 +17,18 @@ function ProductFooter(props) {
   const [discountType, setDiscountType] = useState("VND");
   const [discountAmount, setDiscountAmount] = useState(0);
   const [receivedAmount, setReceivedAmount] = useState(0);
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
   const showModal = () => {
     setIsModalOpen(true);
   };
-  const { CartItems, notes, currentCustomers } = props;
+  const { currentCustomers } = props;
+  const cartState = useSelector((state) => state.cart);
+  const tab = useSelector((state) => state.tab);
+  const Cart = cartState.find(element => element.tabId === tab.currentTabId);
+  let CartItems = [];
+  if(Cart !== undefined) CartItems = Cart.cartItems;
+
   const optionsDiscountType = [
     { label: "VND", value: "VND" },
     { label: "%", value: "Pecent" },
@@ -28,8 +38,9 @@ function ProductFooter(props) {
   if (CartItems.length > 0) {
     CartItems.forEach((element) => {
       totalQuantity += element.quantity;
-      totalPrice += element.quantity * element.price;
+      totalPrice += element.quantity * element.display_price;
     });
+    //setFinalTotalPrice(totalPrice);
   }
   let currentCustomerName =
     currentCustomers.value > 0 ? currentCustomers.label : "Khách lẻ";
@@ -38,7 +49,7 @@ function ProductFooter(props) {
     let total = 0;
     if (CartItems.length > 0) {
       CartItems.forEach((element) => {
-        total += element.quantity * element.price;
+        total += element.quantity * element.display_price;
       });
       if (discountAmount > 0) {
         if (discountType === "VND") total = total - discountAmount;
@@ -48,40 +59,40 @@ function ProductFooter(props) {
     }
   }, [CartItems]);
 
-  useEffect(() => {
-    setReceivedAmount(finalTotalPrice);
-  }, [finalTotalPrice]);
-
-  useEffect(() => {
-    setReceivedAmount(finalTotalPrice);
-    setReturnAmount(0);
-  }, [finalTotalPrice]);
-
   const sendInvoice = () => {
     let inventoryItems = [];
+    let cartTotal = 0;
     if (CartItems.length > 0) {
       CartItems.forEach((element) => {
-        inventoryItems.push({hdnProductId:element.id,qty:element.quantity,listPrice:element.price,comment:element.note}); 
+        cartTotal += element.quantity * element.price;
+        inventoryItems.push({
+          hdnProductId: element.id,
+          qty: element.quantity,
+          listPrice: element.price,
+          discount_percentage: element.discount_percent,
+          discount_amount: element.discount_amount,
+          comment: element.note,
+        });
       });
     }
-    let customerId =
-    currentCustomers.value > 0 ? currentCustomers.value : 0;
-    const currentDate = moment(new Date()).format('YYYY-MM-DD')
+    let customerId = currentCustomers.value > 0 ? currentCustomers.value : 0;
+    const currentDate = moment(new Date()).format("YYYY-MM-DD");
     let newInvoice = {
       items: JSON.stringify(inventoryItems),
-      subject: "Hóa đơn bán hàng " + moment(new Date()).format('DD-MM-YYYY HH:MM:SS'),
+      subject:
+        "Hóa đơn bán hàng " + moment(new Date()).format("DD-MM-YYYY HH:MM:SS"),
       contact_id: customerId,
-      invoicedate:  currentDate,
-      duedate:  currentDate,
-      subtotal: finalTotalPrice,
-      description: notes,
+      invoicedate: currentDate,
+      duedate: currentDate,
+      subtotal: cartTotal,
+      adjustment: discountAmount,
+      description: Cart.notes,
       currency_id: 2,
       conversion_rate: 1,
-      total: finalTotalPrice
+      total: finalTotalPrice,
     };
     //Post api
     let postUrl = `${process.env.REACT_APP_API_URL}/modules/RestfulApi/Invoice/${Key}`;
-    console.log("postUrl:", postUrl);
     axios
       .post(postUrl, new URLSearchParams(newInvoice))
       .then((res) => {
@@ -90,6 +101,8 @@ function ProductFooter(props) {
           content: "Tạo hóa đơn thành công",
         });
         form.resetFields();
+        dispatch(clearCart(tab.currentTabId));
+        dispatch(closeTab(tab.currentTabId));
         setIsModalOpen(false);
       })
       .catch((err) => {
@@ -103,14 +116,14 @@ function ProductFooter(props) {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
   const payMoney = (value) => {
     setReturnAmount(value - finalTotalPrice);
     setReturnAmount(value - finalTotalPrice);
     setReceivedAmount(value);
+  };
+
+  const closeThisTab = () => {
+    dispatch(closeTab(tab.currentTabId));
   };
 
   //onChangeDiscount
@@ -135,11 +148,18 @@ function ProductFooter(props) {
   };
   return (
     <div>
-      <Button type="primary" className="pay-btn" onClick={showModal}>
+      {contextHolder}
+      <Button
+        type="primary"
+        className="pay-btn"
+        disabled={CartItems.length === 0}
+        onClick={showModal}
+      >
         THANH TOÁN
       </Button>
+
       <Modal
-        className = "payModal"
+        className="payModal"
         open={isModalOpen}
         onCancel={handleCancel}
         footer={[
@@ -149,16 +169,13 @@ function ProductFooter(props) {
             htmlType="submit"
             className="custom-button-size"
             onClick={sendInvoice}
+            disabled={CartItems.length === 0}
           >
             THANH TOÁN
           </Button>,
         ]}
       >
-        <Form
-          {...formItemLayout}
-          form={form}
-          style={{ maxWidth: 600 }}
-        >
+        <Form {...formItemLayout} form={form} style={{ maxWidth: 600 }}>
           <Form.Item label="Khách hàng" className="">
             <span className="ant-form-text">{currentCustomerName}</span>
           </Form.Item>
