@@ -1,6 +1,7 @@
 import './ProductList.css'
 import Products from '../../../Constants/Products';
 import { Col, Row, Avatar, Card, Pagination} from 'antd';
+import Helper from "./../../../Common/Helper";
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { addItem } from '../../Cart/cartSlice'
@@ -42,7 +43,6 @@ function ProductList(props) {
 
     // add to cart action 
     const addToCart = (product) => {
-        //props.onAddToCart(product);
         dispatch(addItem({product:product,tabId:tab.currentTabId}))
     };
 
@@ -58,7 +58,7 @@ function ProductList(props) {
                     <Avatar src={product.image} className='avt' shape="square" size={54} />
                     <div className='infor'>
                         <div className='product-title'>{product.name}</div>
-                        <span className='price'>{parseInt(product.price)} VNĐ</span>
+                        <span className='price'>{Helper.convertToVnd(product.price)}</span>
                     </div>
                 </Card>
             </Col>

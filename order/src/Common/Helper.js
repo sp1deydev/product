@@ -1,6 +1,10 @@
 class Helper {
     static convertToVnd = function (number) {
-        return number = number.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+        const VND = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+          });
+        return VND.format(number);
     }
 }
 export default Helper

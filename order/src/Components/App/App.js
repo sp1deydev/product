@@ -1,10 +1,11 @@
 import "./App.css";
-import { Layout, Input, Tabs } from "antd";
+import { Layout, Tabs, AutoComplete } from "antd";
 import BodyContent from "../BodyContent/BodyContent";
 import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { activeTab } from "../Cart/tabSlice";
 import { addCart, removeCart } from "../Cart/cartSlice";
+import { addItem } from '../Cart/cartSlice'
 const { Header } = Layout;
 
 function App() {
@@ -12,9 +13,12 @@ function App() {
   const dispatch = useDispatch();
   const tab = useSelector((state) => state.tab);
   const cartState = useSelector((state) => state.cart);
+  
+  const productList = useSelector((state) => state.product);
+  console.log("produc list on App:",productList);
+  const [options, setOptions] = useState([]);
   const [activeKey, setActiveKey] = useState(1);
   const initTabs = [];
-  console.log("cartState:", cartState);
   if (cartState.length > 1) {
     cartState.map((cart, index) => {
       const item = {
@@ -34,8 +38,7 @@ function App() {
     });
   }
   const initialItems = initTabs;
-  console.log("initialItems:", initialItems);
- 
+
   const [items, setItems] = useState(initialItems);
   const newTabIndex = useRef(initTabs.length);
 
@@ -44,6 +47,24 @@ function App() {
   const onChange = (newActiveKey) => {
     setActiveKey(newActiveKey);
     dispatch(activeTab(newActiveKey));
+  };
+
+  const handleProductSearch = (value) => {
+    var filterList = [];
+    productList.forEach(function (option) {
+      console.log("option:",option);
+      if (option.name.toLowerCase().indexOf(value) > -1 || option.productcode.toLowerCase().indexOf(value) > -1 ) {
+        var someNewValue = { key: option.id, value: option.name };
+        filterList.push(someNewValue);
+      }
+    });
+    setOptions(filterList);
+  };
+
+  const handleProductSelect = (value, option) => {
+    let product = productList.find(prod=>prod.id === option.key);
+    dispatch(addItem({product:product, tabId: tab.currentTabId}));
+    setOptions([]);
   };
 
   useEffect(() => {
@@ -106,7 +127,15 @@ function App() {
     <div className="App">
       <Layout className="layout">
         <Header>
-          <Input className="logo" placeholder="Search" />
+          <AutoComplete
+            className="logo"
+            allowClear={true}
+            style={{ width: 200 }}
+            options={options}
+            onSearch={handleProductSearch}
+            onSelect={(val, option) => handleProductSelect(val, option)}
+            placeholder="Tìm thuốc theo tên hoặc mã"
+          />
           <Tabs
             type="editable-card"
             onChange={onChange}

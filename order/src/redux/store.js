@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import cartReducer from "../Components/Cart/cartSlice";
+import productReducer from "../Components/Product/productSlice";
 import tabReducer from "../Components/Cart/tabSlice";
 const store = configureStore({
   reducer: {
     tab: tabReducer,
     cart: cartReducer,
+    product: productReducer,
   },
   preloadedState: loadFromLocalStorage(),
 });

@@ -19,6 +19,7 @@ dataList.map((elem) => {
   Products.push({
     id: elem.record_id,
     name: elem.productname,
+    productcode: elem.productcode,
     image: elem.imagename,
     price: elem.unit_price,
     display_price: elem.unit_price,
@@ -31,5 +32,4 @@ dataList.map((elem) => {
     isOnCart: false,
   });
 });
-
 export default Products;
